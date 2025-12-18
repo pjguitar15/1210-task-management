@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+:root {
+  --brand-gold: #D3A135;
+}
+
+/* Modern scrollbar */
+* {
+  scrollbar-width: thin;                 /* Firefox */
+  scrollbar-color: rgba(24,24,27,.35) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(24,24,27,.25);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(24,24,27,.35);
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
