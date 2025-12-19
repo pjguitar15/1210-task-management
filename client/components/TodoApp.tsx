@@ -7,10 +7,14 @@ import { useDebouncedValue } from '@/lib/utils'
 import { TodoForm, TodoList, SearchInput, SkeletonList } from '@/components/todo'
 import Image from 'next/image'
 import logo from '@/public/assets/logo.png'
+import TodoUtils from './todo/TodoUtils'
 
 export default function TodoApp() {
   const [title, setTitle] = useState('')
   const [q, setQ] = useState('')
+  const [completedAtBottom, setCompletedAtBottom] = useState(true)
+  const [newestFirst, setNewestFirst] = useState(false)
+  const [showOnlyDone, setShowOnlyDone] = useState(false)
   const debouncedQ = useDebouncedValue(q, UI.searchDebounceMs)
 
   const {
@@ -25,6 +29,24 @@ export default function TodoApp() {
     onDelete,
     onEdit,
   } = useTodos(debouncedQ)
+
+  const displayedTodos = useMemo(() => {
+    let arr = [...todos]
+
+    if (showOnlyDone) {
+      arr = arr.filter((t) => t.is_completed)
+    }
+
+    if (!completedAtBottom) {
+      arr = arr.sort((a, b) => a.id - b.id)
+    }
+
+    if (newestFirst) {
+      arr = [...arr].reverse()
+    }
+
+    return arr
+  }, [todos, completedAtBottom, newestFirst, showOnlyDone])
   
   const stats = useMemo(() => {
     const total = todos.length
@@ -59,7 +81,9 @@ export default function TodoApp() {
           </p>
         </div>
 
-        <SearchInput value={q} onChange={setQ} />
+        <div className='flex items-center gap-3'>
+          <SearchInput value={q} onChange={setQ} />
+        </div>
       </div>
 
       <TodoForm
@@ -81,9 +105,18 @@ export default function TodoApp() {
         </div>
       ) : null}
 
+      <TodoUtils
+        completedAtBottom={completedAtBottom}
+        setCompletedAtBottom={setCompletedAtBottom}
+        newestFirst={newestFirst}
+        setNewestFirst={setNewestFirst}
+        showOnlyDone={showOnlyDone}
+        setShowOnlyDone={setShowOnlyDone}
+      />
+
       <div className='flex flex-col gap-3'>
         <TodoList
-          todos={todos}
+          todos={displayedTodos}
           isLoading={isLoading}
           onToggle={onToggle}
           onDelete={onDelete}

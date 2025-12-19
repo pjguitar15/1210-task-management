@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { InlineEditableTitle } from '@/components/todo'
 import { Todo } from '@/lib/todos'
 import { FaTrash } from 'react-icons/fa'
 import { GoldCheckbox } from '../ui/GoldCheckbox'
+import ConfirmModal from '../ui/ConfirmModal' 
 
 export default function TodoItem({
   todo,
@@ -23,7 +25,9 @@ export default function TodoItem({
       })
     : null
 
-  return (
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false) 
+
+  return (<> 
     <div className='group flex items-center justify-between gap-3 p-4 rounded-xl bg-white shadow-sm transition hover:bg-zinc-50'>
       <div className='flex items-center gap-3 w-1/2'>
         <GoldCheckbox
@@ -45,14 +49,28 @@ export default function TodoItem({
           Added {createdAt}
         </span>
         <button
-          onClick={onDelete}
+          onClick={() => !deleteDisabled && setIsConfirmOpen(true)}
           disabled={deleteDisabled}
-          className='ml-auto rounded-lg px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900'
+          className='ml-auto rounded-lg px-3 py-2 text-sm text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 cursor-pointer'
           title='Delete'
         >
           <FaTrash className='text-zinc-300 text-lg transition duration-200 hover:text-[var(--brand-gold)] hover:scale-110' />
         </button>
       </div>
     </div>
-  )
+
+    <ConfirmModal
+      isOpen={isConfirmOpen}
+      title='Delete task'
+      destructive
+      confirmLabel='Delete'
+      onCancel={() => setIsConfirmOpen(false)}
+      onConfirm={() => {
+        setIsConfirmOpen(false)
+        onDelete()
+      }}
+    >
+      Are you sure you want to delete this task? This action cannot be undone.
+    </ConfirmModal>
+  </>)
 }

@@ -20,7 +20,7 @@ export function useTodos(search: string) {
       if (search.trim()) url.searchParams.set("q", search.trim());
       const res = await http<TodoListResponse>(url.toString(), { signal });
       const todos = normalizeTodosResponse(res).map((t) => ({ ...t, is_completed: Boolean(t.is_completed) }));
-      return todos;
+      return sortTodos(todos);
     },
   });
 
